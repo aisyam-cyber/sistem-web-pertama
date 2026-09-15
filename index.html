@@ -1,10 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="ms">
 <head>
-    <title>Sistem Web Pertama</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Data Anggota - Hospital Kemaman</title>
 </head>
 <body>
-    <h1>Selamat Datang ke Sistem Saya!</h1>
-    <p>Ini adalah versi pertama projek saya yang dihoskan di GitHub.</p>
+
+    <!-- TAJUK UTAMA -->
+    <header>
+        <h1>SISTEM PENGUMPULAN DATA ANGGOTA</h1>
+        <h3>Hospital Kemaman</h3>
+    </header>
+
+    <main>
+        <!-- BORANG INPUT DATA -->
+        <section>
+            <h2>Borang Pendaftaran Tugas / Data</h2>
+            <form id="dataForm">
+                
+                <!-- NAMA ANGGOTA -->
+                <div>
+                    <label for="nama">Nama Anggota:</label><br>
+                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama penuh" required>
+                </div>
+                <br>
+
+                <!-- KATEGORI JAWATAN -->
+                <div>
+                    <label for="jawatan">Kategori Anggota:</label><br>
+                    <select id="jawatan" name="jawatan" required>
+                        <option value="">-- Pilih Jawatan --</option>
+                        <option value="PEMANDU">Pemandu</option>
+                        <option value="PPP">Penolong Pegawai Perubatan (PPP)</option>
+                        <option value="PPK">Pembantu Perawatan Kesihatan (PPK)</option>
+                    </select>
+                </div>
+                <br>
+
+                <!-- NO TELEFON -->
+                <div>
+                    <label for="notel">No. Telefon:</label><br>
+                    <input type="tel" id="notel" name="notel" placeholder="Contoh: 0123456789" required>
+                </div>
+                <br>
+
+                <!-- BUTANG HANTAR -->
+                <button type="submit">Hantar Data</button>
+            </form>
+        </section>
+    </main>
+
 </body>
 </html>
