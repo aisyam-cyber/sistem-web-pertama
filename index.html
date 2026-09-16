@@ -18,15 +18,11 @@
         <section>
             <h2>Borang Pendaftaran Tugas / Data</h2>
             <form id="dataForm">
-                
-                <!-- NAMA ANGGOTA -->
                 <div>
                     <label for="nama">Nama Anggota:</label><br>
                     <input type="text" id="nama" name="nama" placeholder="Masukkan nama penuh" required>
                 </div>
                 <br>
-
-                <!-- KATEGORI JAWATAN -->
                 <div>
                     <label for="jawatan">Kategori Anggota:</label><br>
                     <select id="jawatan" name="jawatan" required>
@@ -37,17 +33,39 @@
                     </select>
                 </div>
                 <br>
-
-                <!-- NO TELEFON -->
                 <div>
                     <label for="notel">No. Telefon:</label><br>
                     <input type="tel" id="notel" name="notel" placeholder="Contoh: 0123456789" required>
                 </div>
                 <br>
-
-                <!-- BUTANG HANTAR -->
                 <button type="submit">Hantar Data</button>
             </form>
+        </section>
+
+        <hr>
+
+        <!-- ELEMEN BAHARU: JADUAL SENARAI REKOD ANGGOTA -->
+        <section>
+            <h2>Senarai Rekod Anggota</h2>
+            <table border="1" cellpadding="8">
+                <thead>
+                    <tr>
+                        <th>Bil.</th>
+                        <th>Nama Anggota</th>
+                        <th>Kategori</th>
+                        <th>No. Telefon</th>
+                    </tr>
+                </thead>
+                <tbody id="senaraiAnggota">
+                    <!-- Contoh Data Harapan (Mock Data) -->
+                    <tr>
+                        <td>1</td>
+                        <td>Ahmad Bin Ali</td>
+                        <td>PEMANDU</td>
+                        <td>0199998888</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
     </main>
 
