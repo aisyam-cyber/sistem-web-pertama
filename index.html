@@ -6,7 +6,6 @@
     <title>Sistem Data Anggota - Hospital Kemaman</title>
     
     <style>
-        /* ASAS & MOBILE-FIRST LAYOUT */
         * {
             box-sizing: border-box;
             font-family: Arial, sans-serif;
@@ -19,7 +18,6 @@
             color: #333;
         }
 
-        /* HEADER */
         header {
             background-color: #005b96;
             color: white;
@@ -41,7 +39,6 @@
             opacity: 0.9;
         }
 
-        /* KAD SECTION (CONTAINER) */
         section {
             background: white;
             padding: 15px;
@@ -58,7 +55,6 @@
             padding-bottom: 8px;
         }
 
-        /* BORANG & INPUT */
         .form-group {
             margin-bottom: 15px;
         }
@@ -81,7 +77,6 @@
             background-color: #fafafa;
         }
 
-        /* BUTANG HANTAR (MESRA IBU JARI TELEFON) */
         button {
             width: 100%;
             background-color: #28a745;
@@ -98,9 +93,8 @@
             background-color: #218838;
         }
 
-        /* JADUAL RESPONSIVE */
         .table-container {
-            overflow-x: auto; /* membolehkan jadual di-scroll ke tepi jika skrin terlalu kecil */
+            overflow-x: auto;
         }
 
         table {
@@ -139,7 +133,6 @@
         <section>
             <h2>Borang Pendaftaran Tugas / Data</h2>
             <form id="dataForm">
-                
                 <div class="form-group">
                     <label for="nama">Nama Anggota:</label>
                     <input type="text" id="nama" name="nama" placeholder="Masukkan nama penuh" required>
@@ -178,17 +171,48 @@
                         </tr>
                     </thead>
                     <tbody id="senaraiAnggota">
-                        <tr>
-                            <td>1</td>
-                            <td>Ahmad Bin Ali</td>
-                            <td>PEMANDU</td>
-                            <td>0199998888</td>
-                        </tr>
+                        <!-- Data akan dimasukkan secara dinamik oleh JavaScript -->
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
+
+    <!-- KOD JAVASCRIPT -->
+    <script>
+        // 1. Ambil elemen HTML menggunakan DOM ID
+        const borang = document.getElementById('dataForm');
+        const jadualBody = document.getElementById('senaraiAnggota');
+        let bilangRekod = 0; // Pembolehubah kiraan bilis
+
+        // 2. Dengarkan tindakan 'submit' pada borang
+        borang.addEventListener('submit', function(e) {
+            e.preventDefault(); // Halang borang daripada refresh skrin
+
+            // 3. Tangkap nilai input dari pengguna
+            const nama = document.getElementById('nama').value;
+            const jawatan = document.getElementById('jawatan').value;
+            const notel = document.getElementById('notel').value;
+
+            // 4. Tambah kiraan rekod
+            bilangRekod++;
+
+            // 5. Cipta baris jadual (row) baharu
+            const barisBaharu = document.createElement('tr');
+            barisBaharu.innerHTML = `
+                <td>${bilangRekod}</td>
+                <td>${nama}</td>
+                <td>${jawatan}</td>
+                <td>${notel}</td>
+            `;
+
+            // 6. Masukkan baris baharu ke dalam jadual
+            jadualBody.appendChild(barisBaharu);
+
+            // 7. Kosongkan borang semula
+            borang.reset();
+        });
+    </script>
 
 </body>
 </html>
