@@ -4,12 +4,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Data Anggota - Hospital Kemaman</title>
+    
+    <style>
+        /* ASAS & MOBILE-FIRST LAYOUT */
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 15px;
+            color: #333;
+        }
+
+        /* HEADER */
+        header {
+            background-color: #005b96;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            margin: 0;
+        }
+
+        header h3 {
+            font-size: 1rem;
+            margin: 5px 0 0 0;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+
+        /* KAD SECTION (CONTAINER) */
+        section {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: #005b96;
+            margin-top: 0;
+            border-bottom: 2px solid #eef2f5;
+            padding-bottom: 8px;
+        }
+
+        /* BORANG & INPUT */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #fafafa;
+        }
+
+        /* BUTANG HANTAR (MESRA IBU JARI TELEFON) */
+        button {
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:active {
+            background-color: #218838;
+        }
+
+        /* JADUAL RESPONSIVE */
+        .table-container {
+            overflow-x: auto; /* membolehkan jadual di-scroll ke tepi jika skrin terlalu kecil */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: #005b96;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
 </head>
 <body>
 
     <!-- TAJUK UTAMA -->
     <header>
-        <h1>SISTEM PENGUMPULAN DATA ANGGOTA</h1>
+        <h1>SISTEM DATA ANGGOTA</h1>
         <h3>Hospital Kemaman</h3>
     </header>
 
@@ -18,13 +139,14 @@
         <section>
             <h2>Borang Pendaftaran Tugas / Data</h2>
             <form id="dataForm">
-                <div>
-                    <label for="nama">Nama Anggota:</label><br>
+                
+                <div class="form-group">
+                    <label for="nama">Nama Anggota:</label>
                     <input type="text" id="nama" name="nama" placeholder="Masukkan nama penuh" required>
                 </div>
-                <br>
-                <div>
-                    <label for="jawatan">Kategori Anggota:</label><br>
+
+                <div class="form-group">
+                    <label for="jawatan">Kategori Anggota:</label>
                     <select id="jawatan" name="jawatan" required>
                         <option value="">-- Pilih Jawatan --</option>
                         <option value="PEMANDU">Pemandu</option>
@@ -32,40 +154,39 @@
                         <option value="PPK">Pembantu Perawatan Kesihatan (PPK)</option>
                     </select>
                 </div>
-                <br>
-                <div>
-                    <label for="notel">No. Telefon:</label><br>
+
+                <div class="form-group">
+                    <label for="notel">No. Telefon:</label>
                     <input type="tel" id="notel" name="notel" placeholder="Contoh: 0123456789" required>
                 </div>
-                <br>
+
                 <button type="submit">Hantar Data</button>
             </form>
         </section>
 
-        <hr>
-
-        <!-- ELEMEN BAHARU: JADUAL SENARAI REKOD ANGGOTA -->
+        <!-- JADUAL SENARAI REKOD ANGGOTA -->
         <section>
             <h2>Senarai Rekod Anggota</h2>
-            <table border="1" cellpadding="8">
-                <thead>
-                    <tr>
-                        <th>Bil.</th>
-                        <th>Nama Anggota</th>
-                        <th>Kategori</th>
-                        <th>No. Telefon</th>
-                    </tr>
-                </thead>
-                <tbody id="senaraiAnggota">
-                    <!-- Contoh Data Harapan (Mock Data) -->
-                    <tr>
-                        <td>1</td>
-                        <td>Ahmad Bin Ali</td>
-                        <td>PEMANDU</td>
-                        <td>0199998888</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bil.</th>
+                            <th>Nama Anggota</th>
+                            <th>Kategori</th>
+                            <th>No. Telefon</th>
+                        </tr>
+                    </thead>
+                    <tbody id="senaraiAnggota">
+                        <tr>
+                            <td>1</td>
+                            <td>Ahmad Bin Ali</td>
+                            <td>PEMANDU</td>
+                            <td>0199998888</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
     </main>
 
