@@ -67,6 +67,7 @@
         }
 
         input[type="text"],
+        input[type="password"],
         input[type="tel"],
         select {
             width: 100%;
@@ -115,17 +116,24 @@
             cursor: pointer;
         }
 
-        .btn-batal {
+        .btn-logout {
             background-color: #6c757d;
             color: white;
             border: none;
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 6px;
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            border-radius: 4px;
             cursor: pointer;
-            margin-top: 10px;
-            display: none;
+            float: right;
+            margin-top: -35px;
+        }
+
+        .user-bar {
+            background-color: #e3f2fd;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
         }
 
         .table-container {
@@ -159,6 +167,11 @@
             color: #666;
             font-style: italic;
         }
+
+        /* TERSEMBUNYI SECARA DEFAULT */
+        #mainAppScreen {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -169,12 +182,39 @@
         <h3>Hospital Kemaman</h3>
     </header>
 
-    <main>
+    <!-- 1. SKRIN LOGIN -->
+    <main id="loginScreen">
+        <section>
+            <h2>Log Masuk Sistem</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">ID Pengguna:</label>
+                    <input type="text" id="username" placeholder="Contoh: ADM01 / USR01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Kata Laluan:</label>
+                    <input type="password" id="password" placeholder="Masukkan kata laluan" required>
+                </div>
+
+                <button type="submit" id="btnLogin">Log Masuk</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- 2. SKRIN UTAMA (UTAMA SISTEM) -->
+    <main id="mainAppScreen">
+        
+        <!-- BAR STATUS PENGGUNA -->
+        <div class="user-bar">
+            <span>Log masuk sebagai: <strong id="lblNamaUser">-</strong> (<span id="lblRoleUser">-</span>)</span>
+            <button class="btn-logout" onclick="logOut()">Log Keluar</button>
+        </div>
+
         <!-- BORANG INPUT DATA -->
         <section>
             <h2 id="tajukBorang">Borang Pendaftaran Tugas / Data</h2>
             <form id="dataForm">
-                <!-- ID tersembunyi untuk proses update -->
                 <input type="hidden" id="editId" value="">
 
                 <div class="form-group">
@@ -198,11 +238,11 @@
                 </div>
 
                 <button type="submit" id="btnHantar">Hantar Data ke Google Sheets</button>
-                <button type="button" id="btnBatal" class="btn-batal" onclick="batalEdit()">Batal Kemas Kini</button>
+                <button type="button" id="btnBatal" style="display:none; margin-top:10px; background:#6c757d;" onclick="batalEdit()">Batal Kemas Kini</button>
             </form>
         </section>
 
-        <!-- JADUAL SENARAI KESELURUHAN REKOD -->
+        <!-- JADUAL REKOD -->
         <section>
             <h2>Senarai Keseluruhan Rekod (Google Sheets)</h2>
             <div class="table-container">
@@ -214,34 +254,111 @@
                             <th>Nama Anggota</th>
                             <th>Kategori</th>
                             <th>No. Telefon</th>
-                            <th>Tindakan</th>
+                            <th id="thTindakan">Tindakan</th>
                         </tr>
                     </thead>
                     <tbody id="senaraiAnggota">
-                        <tr>
-                            <td colspan="6" class="status-loading">Sedang memuatkan data dari Google Sheets...</td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
 
-    <!-- KOD JAVASCRIPT FULL CRUD -->
+    <!-- KOD JAVASCRIPT AUTH & ROLES -->
     <script>
         // ⚠️ TETAPKAN WEB APP URL ANDA DI SINI
-        const API_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbwJuGMxzMDQI7RqB_tze1-3nIcOCexDM2bN5606P-JJtmu4vNs83gY_AH8PPAGTt1U2/exec";
+        const API_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbwPsZ8tA20_1ABxY3k2qvTv7xGwF6RMOV40b78_EsLuHgyF-lFDRCAIAqTvYullnA0t/exec";
 
+        // ELEMEN DOM
+        const loginScreen = document.getElementById('loginScreen');
+        const mainAppScreen = document.getElementById('mainAppScreen');
+        const loginForm = document.getElementById('loginForm');
+        const btnLogin = document.getElementById('btnLogin');
+        
         const borang = document.getElementById('dataForm');
         const jadualBody = document.getElementById('senaraiAnggota');
         const btnHantar = document.getElementById('btnHantar');
         const btnBatal = document.getElementById('btnBatal');
-        const tajukBorang = document.getElementById('tajukBorang');
         const selectJawatan = document.getElementById('jawatan');
 
-        // FUNGSI MEMBACA DATA DARI GOOGLE SHEETS (READ)
+        let currentSession = null;
+
+        // 1. SEMAK SESI LOG IN SEBAIK SAHAJA LAMAN DIBUKA
+        window.onload = function() {
+            const savedUser = localStorage.getItem('userSession');
+            if (savedUser) {
+                currentSession = JSON.parse(savedUser);
+                paparkanSkrinUtama();
+            }
+        };
+
+        // 2. FUNGSI LOG IN
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            btnLogin.disabled = true;
+            btnLogin.innerText = "Mengesahkan...";
+
+            const payload = {
+                action: "LOGIN",
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' }, // Elak isu preflight CORS
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === "success") {
+                    currentSession = res.user;
+                    localStorage.setItem('userSession', JSON.stringify(res.user));
+                    loginForm.reset();
+                    paparkanSkrinUtama();
+                } else {
+                    alert("❌ " + res.message);
+                }
+                btnLogin.disabled = false;
+                btnLogin.innerText = "Log Masuk";
+            })
+            .catch(err => {
+                alert("❌ Ralat Sambungan API: " + err);
+                btnLogin.disabled = false;
+                btnLogin.innerText = "Log Masuk";
+            });
+        });
+
+        // 3. FUNGSI PAPAR SKRIN UTAMA BERDASARKAN ROLES
+        function paparkanSkrinUtama() {
+            loginScreen.style.display = "none";
+            mainAppScreen.style.display = "block";
+
+            document.getElementById('lblNamaUser').innerText = currentSession.nama;
+            document.getElementById('lblRoleUser').innerText = currentSession.role;
+
+            // Sembunyikan kolum Tindakan jika USER biasa
+            const thTindakan = document.getElementById('thTindakan');
+            if (currentSession.role !== "ADMIN") {
+                thTindakan.style.display = "none";
+            } else {
+                thTindakan.style.display = "";
+            }
+
+            muatDataPenuh();
+        }
+
+        // 4. FUNGSI LOG KELUAR
+        function logOut() {
+            localStorage.removeItem('userSession');
+            currentSession = null;
+            mainAppScreen.style.display = "none";
+            loginScreen.style.display = "block";
+        }
+
+        // 5. FUNGSI READ DATA
         function muatDataPenuh() {
-            jadualBody.innerHTML = '<tr><td colspan="6" class="status-loading">Sedang memuatkan data dari Google Sheets...</td></tr>';
+            jadualBody.innerHTML = '<tr><td colspan="6" class="status-loading">Sedang memuatkan data...</td></tr>';
 
             fetch(API_URL)
             .then(response => response.json())
@@ -256,89 +373,83 @@
 
                     res.data.forEach((item, index) => {
                         const baris = document.createElement('tr');
-                        // Bersihkan teks untuk elak ralat sintaks JavaScript pada butang edit
                         const namaClean = item.nama.replace(/'/g, "\\'");
+
+                        // Butang Tindakan (Hanya untuk ADMIN)
+                        let kolumTindakan = "";
+                        if (currentSession.role === "ADMIN") {
+                            kolumTindakan = `
+                                <td>
+                                    <button class="btn-edit" onclick="sediaEdit('${item.id}', '${namaClean}', '${item.jawatan}', '${item.notel}')">Edit</button>
+                                    <button class="btn-padam" onclick="padamRekod('${item.id}', '${item.jawatan}')">Padam</button>
+                                </td>
+                            `;
+                        } else {
+                            kolumTindakan = `<td style="display:none;"></td>`;
+                        }
+
                         baris.innerHTML = `
                             <td>${index + 1}</td>
                             <td>${item.timestamp}</td>
                             <td>${item.nama}</td>
                             <td>${item.jawatan}</td>
                             <td>${item.notel}</td>
-                            <td>
-                                <button class="btn-edit" onclick="sediaEdit('${item.id}', '${namaClean}', '${item.jawatan}', '${item.notel}')">Edit</button>
-                                <button class="btn-padam" onclick="padamRekod('${item.id}', '${item.jawatan}')">Padam</button>
-                            </td>
+                            ${kolumTindakan}
                         `;
                         jadualBody.appendChild(baris);
                     });
-                } else {
-                    jadualBody.innerHTML = '<tr><td colspan="6" class="status-loading">Gagal memuatkan data.</td></tr>';
                 }
-            })
-            .catch(err => {
-                jadualBody.innerHTML = '<tr><td colspan="6" class="status-loading">Ralat Sambungan API.</td></tr>';
             });
         }
 
-        // FUNGSI BERPINDAH KE MOD EDIT
+        // 6. FUNGSI EDIT / BATAL
         function sediaEdit(id, nama, jawatan, notel) {
             document.getElementById('editId').value = id;
             document.getElementById('nama').value = nama;
             document.getElementById('jawatan').value = jawatan;
             document.getElementById('notel').value = notel;
-
-            // Kategori tidak boleh diubah semasa edit untuk mengelakkan salah tab
             selectJawatan.disabled = true;
 
-            tajukBorang.innerText = "Kemas Kini Maklumat Anggota";
+            document.getElementById('tajukBorang').innerText = "Kemas Kini Maklumat Anggota";
             btnHantar.innerText = "Kemas Kini Data";
             btnHantar.style.backgroundColor = "#005b96";
             btnBatal.style.display = "block";
-
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // FUNGSI BATAL EDIT
         function batalEdit() {
             document.getElementById('editId').value = "";
             borang.reset();
             selectJawatan.disabled = false;
-
-            tajukBorang.innerText = "Borang Pendaftaran Tugas / Data";
+            document.getElementById('tajukBorang').innerText = "Borang Pendaftaran Tugas / Data";
             btnHantar.innerText = "Hantar Data ke Google Sheets";
             btnHantar.style.backgroundColor = "#28a745";
             btnBatal.style.display = "none";
         }
 
-        // FUNGSI MEMADAM REKOD (DELETE)
+        // 7. FUNGSI PADAM (DELETE)
         function padamRekod(id, jawatan) {
             if (confirm("Adakah anda pasti mahu memadam rekod ini secara kekal?")) {
                 fetch(API_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify({
                         action: "DELETE",
                         id: id,
-                        jawatan: jawatan
+                        jawatan: jawatan,
+                        role: currentSession.role
                     })
                 })
                 .then(() => {
-                    alert("✅ Rekod Berjaya Dipadam!");
-                    setTimeout(muatDataPenuh, 1500);
-                })
-                .catch(error => {
-                    alert("❌ Ralat semasa memadam: " + error);
+                    alert("✅ Rekod Dipadam!");
+                    setTimeout(muatDataPenuh, 1000);
                 });
             }
         }
 
-        window.onload = muatDataPenuh;
-
-        // FUNGSI HANTAR BORANG (CREATE ATAU UPDATE)
+        // 8. FUNGSI SUBMIT BORANG (CREATE / UPDATE)
         borang.addEventListener('submit', function(e) {
             e.preventDefault();
-
             btnHantar.disabled = true;
             btnHantar.innerText = "Sedang Memproses...";
 
@@ -350,25 +461,24 @@
                 id: editId,
                 nama: document.getElementById('nama').value,
                 jawatan: document.getElementById('jawatan').value,
-                notel: document.getElementById('notel').value
+                notel: document.getElementById('notel').value,
+                role: currentSession.role
             };
 
             fetch(API_URL, {
                 method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(payload)
             })
             .then(() => {
-                alert(isUpdate ? "✅ Data Berjaya Dikemas Kini!" : "✅ Data Berjaya Dihantar!");
+                alert(isUpdate ? "✅ Data Dikemas Kini!" : "✅ Data Dihantar!");
                 batalEdit();
                 btnHantar.disabled = false;
-                setTimeout(muatDataPenuh, 1500);
+                setTimeout(muatDataPenuh, 1000);
             })
             .catch(error => {
                 alert("❌ Ralat: " + error);
                 btnHantar.disabled = false;
-                batalEdit();
             });
         });
     </script>
