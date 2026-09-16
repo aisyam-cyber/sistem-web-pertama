@@ -89,8 +89,9 @@
             cursor: pointer;
         }
 
-        button:active {
-            background-color: #218838;
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
         }
 
         .table-container {
@@ -153,13 +154,13 @@
                     <input type="tel" id="notel" name="notel" placeholder="Contoh: 0123456789" required>
                 </div>
 
-                <button type="submit">Hantar Data</button>
+                <button type="submit" id="btnHantar">Hantar Data ke Google Sheets</button>
             </form>
         </section>
 
-        <!-- JADUAL SENARAI REKOD ANGGOTA -->
+        <!-- JADUAL TEMPORARI PRATONTON -->
         <section>
-            <h2>Senarai Rekod Anggota</h2>
+            <h2>Rekod Yang Dihantar (Sesi Ini)</h2>
             <div class="table-container">
                 <table>
                     <thead>
@@ -171,46 +172,69 @@
                         </tr>
                     </thead>
                     <tbody id="senaraiAnggota">
-                        <!-- Data akan dimasukkan secara dinamik oleh JavaScript -->
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
 
-    <!-- KOD JAVASCRIPT -->
+    <!-- KOD JAVASCRIPT API CONNECTIVITY -->
     <script>
-        // 1. Ambil elemen HTML menggunakan DOM ID
+        // ⚠️ TETAPKAN WEB APP URL ANDA DI SINI
+        const API_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbxpWog3-hHRfTj3EieKKaRqh3cr0W4_GOWmF6g_TdlnTHSgrtxk5dQysdZkaJlntbhW/exec";
+
         const borang = document.getElementById('dataForm');
         const jadualBody = document.getElementById('senaraiAnggota');
-        let bilangRekod = 0; // Pembolehubah kiraan bilis
+        const btnHantar = document.getElementById('btnHantar');
+        let bilangRekod = 0;
 
-        // 2. Dengarkan tindakan 'submit' pada borang
         borang.addEventListener('submit', function(e) {
-            e.preventDefault(); // Halang borang daripada refresh skrin
+            e.preventDefault();
 
-            // 3. Tangkap nilai input dari pengguna
-            const nama = document.getElementById('nama').value;
-            const jawatan = document.getElementById('jawatan').value;
-            const notel = document.getElementById('notel').value;
+            // Ubah butang ke mod Menyimpan
+            btnHantar.disabled = true;
+            btnHantar.innerText = "Sedang Menyimpan...";
 
-            // 4. Tambah kiraan rekod
-            bilangRekod++;
+            // Ambil data borang
+            const formData = {
+                nama: document.getElementById('nama').value,
+                jawatan: document.getElementById('jawatan').value,
+                notel: document.getElementById('notel').value
+            };
 
-            // 5. Cipta baris jadual (row) baharu
-            const barisBaharu = document.createElement('tr');
-            barisBaharu.innerHTML = `
-                <td>${bilangRekod}</td>
-                <td>${nama}</td>
-                <td>${jawatan}</td>
-                <td>${notel}</td>
-            `;
+            // Hantar data ke Google Apps Script API melalui fetch()
+            fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                alert("✅ Data Berjaya Dihantar ke Google Sheets!");
 
-            // 6. Masukkan baris baharu ke dalam jadual
-            jadualBody.appendChild(barisBaharu);
+                // Paparkan pada jadual pratonton
+                bilangRekod++;
+                const barisBaharu = document.createElement('tr');
+                barisBaharu.innerHTML = `
+                    <td>${bilangRekod}</td>
+                    <td>${formData.nama}</td>
+                    <td>${formData.jawatan}</td>
+                    <td>${formData.notel}</td>
+                `;
+                jadualBody.appendChild(barisBaharu);
 
-            // 7. Kosongkan borang semula
-            borang.reset();
+                // Reset borang & butang
+                borang.reset();
+                btnHantar.disabled = false;
+                btnHantar.innerText = "Hantar Data ke Google Sheets";
+            })
+            .catch(error => {
+                alert("❌ Ralat Hantaran: " + error);
+                btnHantar.disabled = false;
+                btnHantar.innerText = "Hantar Data ke Google Sheets";
+            });
         });
     </script>
 
