@@ -94,6 +94,17 @@
             cursor: not-allowed;
         }
 
+        .btn-edit {
+            background-color: #ffc107;
+            color: #212529;
+            border: none;
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
         .btn-padam {
             background-color: #dc3545;
             color: white;
@@ -102,11 +113,19 @@
             font-size: 0.8rem;
             border-radius: 4px;
             cursor: pointer;
-            width: auto;
         }
 
-        .btn-padam:hover {
-            background-color: #c82333;
+        .btn-batal {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: none;
         }
 
         .table-container {
@@ -153,8 +172,11 @@
     <main>
         <!-- BORANG INPUT DATA -->
         <section>
-            <h2>Borang Pendaftaran Tugas / Data</h2>
+            <h2 id="tajukBorang">Borang Pendaftaran Tugas / Data</h2>
             <form id="dataForm">
+                <!-- ID tersembunyi untuk proses update -->
+                <input type="hidden" id="editId" value="">
+
                 <div class="form-group">
                     <label for="nama">Nama Anggota:</label>
                     <input type="text" id="nama" name="nama" placeholder="Masukkan nama penuh" required>
@@ -176,6 +198,7 @@
                 </div>
 
                 <button type="submit" id="btnHantar">Hantar Data ke Google Sheets</button>
+                <button type="button" id="btnBatal" class="btn-batal" onclick="batalEdit()">Batal Kemas Kini</button>
             </form>
         </section>
 
@@ -204,14 +227,17 @@
         </section>
     </main>
 
-    <!-- KOD JAVASCRIPT API READ, WRITE & DELETE -->
+    <!-- KOD JAVASCRIPT FULL CRUD -->
     <script>
         // ⚠️ TETAPKAN WEB APP URL ANDA DI SINI
-        const API_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbz9Nt8m0H77qZLwr98f5IKGDSDvVmmYGkL_EjbEF-L1Dqr8Ujnwrlv3z3YaBNIoiItH/exec";
+        const API_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbwJuGMxzMDQI7RqB_tze1-3nIcOCexDM2bN5606P-JJtmu4vNs83gY_AH8PPAGTt1U2/exec";
 
         const borang = document.getElementById('dataForm');
         const jadualBody = document.getElementById('senaraiAnggota');
         const btnHantar = document.getElementById('btnHantar');
+        const btnBatal = document.getElementById('btnBatal');
+        const tajukBorang = document.getElementById('tajukBorang');
+        const selectJawatan = document.getElementById('jawatan');
 
         // FUNGSI MEMBACA DATA DARI GOOGLE SHEETS (READ)
         function muatDataPenuh() {
@@ -230,6 +256,8 @@
 
                     res.data.forEach((item, index) => {
                         const baris = document.createElement('tr');
+                        // Bersihkan teks untuk elak ralat sintaks JavaScript pada butang edit
+                        const namaClean = item.nama.replace(/'/g, "\\'");
                         baris.innerHTML = `
                             <td>${index + 1}</td>
                             <td>${item.timestamp}</td>
@@ -237,6 +265,7 @@
                             <td>${item.jawatan}</td>
                             <td>${item.notel}</td>
                             <td>
+                                <button class="btn-edit" onclick="sediaEdit('${item.id}', '${namaClean}', '${item.jawatan}', '${item.notel}')">Edit</button>
                                 <button class="btn-padam" onclick="padamRekod('${item.id}', '${item.jawatan}')">Padam</button>
                             </td>
                         `;
@@ -249,6 +278,36 @@
             .catch(err => {
                 jadualBody.innerHTML = '<tr><td colspan="6" class="status-loading">Ralat Sambungan API.</td></tr>';
             });
+        }
+
+        // FUNGSI BERPINDAH KE MOD EDIT
+        function sediaEdit(id, nama, jawatan, notel) {
+            document.getElementById('editId').value = id;
+            document.getElementById('nama').value = nama;
+            document.getElementById('jawatan').value = jawatan;
+            document.getElementById('notel').value = notel;
+
+            // Kategori tidak boleh diubah semasa edit untuk mengelakkan salah tab
+            selectJawatan.disabled = true;
+
+            tajukBorang.innerText = "Kemas Kini Maklumat Anggota";
+            btnHantar.innerText = "Kemas Kini Data";
+            btnHantar.style.backgroundColor = "#005b96";
+            btnBatal.style.display = "block";
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // FUNGSI BATAL EDIT
+        function batalEdit() {
+            document.getElementById('editId').value = "";
+            borang.reset();
+            selectJawatan.disabled = false;
+
+            tajukBorang.innerText = "Borang Pendaftaran Tugas / Data";
+            btnHantar.innerText = "Hantar Data ke Google Sheets";
+            btnHantar.style.backgroundColor = "#28a745";
+            btnBatal.style.display = "none";
         }
 
         // FUNGSI MEMADAM REKOD (DELETE)
@@ -276,14 +335,19 @@
 
         window.onload = muatDataPenuh;
 
-        // FUNGSI MENGHANTAR DATA (CREATE)
+        // FUNGSI HANTAR BORANG (CREATE ATAU UPDATE)
         borang.addEventListener('submit', function(e) {
             e.preventDefault();
 
             btnHantar.disabled = true;
-            btnHantar.innerText = "Sedang Menyimpan...";
+            btnHantar.innerText = "Sedang Memproses...";
 
-            const formData = {
+            const editId = document.getElementById('editId').value;
+            const isUpdate = editId !== "";
+
+            const payload = {
+                action: isUpdate ? "UPDATE" : "CREATE",
+                id: editId,
                 nama: document.getElementById('nama').value,
                 jawatan: document.getElementById('jawatan').value,
                 notel: document.getElementById('notel').value
@@ -293,19 +357,18 @@
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(payload)
             })
             .then(() => {
-                alert("✅ Data Berjaya Dihantar!");
-                borang.reset();
+                alert(isUpdate ? "✅ Data Berjaya Dikemas Kini!" : "✅ Data Berjaya Dihantar!");
+                batalEdit();
                 btnHantar.disabled = false;
-                btnHantar.innerText = "Hantar Data ke Google Sheets";
                 setTimeout(muatDataPenuh, 1500);
             })
             .catch(error => {
                 alert("❌ Ralat: " + error);
                 btnHantar.disabled = false;
-                btnHantar.innerText = "Hantar Data ke Google Sheets";
+                batalEdit();
             });
         });
     </script>
