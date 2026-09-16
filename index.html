@@ -176,8 +176,8 @@
         const selectJawatan = document.getElementById('jawatan');
 
         let currentSession = null;
+        let dataGlobal = [];
 
-        // FUNGSI TUKAR MEDAN SPESIFIK BORANG
         function tukarMedanSpesifik() {
             const j = selectJawatan.value;
             document.getElementById('boxPemandu').style.display = (j === 'PEMANDU') ? 'block' : 'none';
@@ -246,6 +246,8 @@
             .then(res => {
                 if (res.status === "success") {
                     jadualBody.innerHTML = "";
+                    dataGlobal = res.data; // Simpan data global untuk rujukan Edit
+
                     if (res.data.length === 0) {
                         jadualBody.innerHTML = '<tr><td colspan="7" class="status-loading">Tiada rekod dijumpai.</td></tr>';
                         return;
@@ -253,7 +255,6 @@
 
                     res.data.forEach((item, index) => {
                         const baris = document.createElement('tr');
-                        const namaClean = item.nama.replace(/'/g, "\\'");
 
                         let maklumatSpesifik = "";
                         if (item.jawatan === "PEMANDU") {
@@ -268,6 +269,7 @@
                         if (currentSession.role === "ADMIN") {
                             kolumTindakan = `
                                 <td>
+                                    <button class="btn-edit" onclick="sediaEdit('${item.id}')">Edit</button>
                                     <button class="btn-padam" onclick="padamRekod('${item.id}', '${item.jawatan}')">Padam</button>
                                 </td>
                             `;
@@ -290,6 +292,49 @@
             });
         }
 
+        // FUNGSI MEMANGGIL DATA KE BORANG APABILA BUTANG EDIT DITEKAN
+        function sediaEdit(id) {
+            const item = dataGlobal.find(d => d.id === id);
+            if (!item) return;
+
+            document.getElementById('editId').value = item.id;
+            document.getElementById('nama').value = item.nama;
+            document.getElementById('ic').value = item.ic;
+            selectJawatan.value = item.jawatan;
+            selectJawatan.disabled = true; // Kategori tidak boleh ditukar semasa edit
+            tukarMedanSpesifik();
+
+            document.getElementById('gred').value = item.gred;
+            document.getElementById('notel').value = item.notel;
+
+            if (item.jawatan === "PEMANDU") {
+                document.getElementById('kelas_lesen').value = item.spesifik1;
+                document.getElementById('tamat_lesen').value = item.spesifik2;
+            } else if (item.jawatan === "PPP") {
+                document.getElementById('pos_basik').value = item.spesifik1;
+                document.getElementById('nama_pos_basik').value = item.spesifik2;
+            } else if (item.jawatan === "PPK") {
+                document.getElementById('unit_penempatan').value = item.spesifik1;
+            }
+
+            document.getElementById('tajukBorang').innerText = "Kemas Kini Maklumat Anggota";
+            btnHantar.innerText = "Kemas Kini Data";
+            btnHantar.style.backgroundColor = "#005b96";
+            btnBatal.style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function batalEdit() {
+            document.getElementById('editId').value = "";
+            borang.reset();
+            selectJawatan.disabled = false;
+            tukarMedanSpesifik();
+            document.getElementById('tajukBorang').innerText = "Borang Maklumat Anggota KKM";
+            btnHantar.innerText = "Hantar Data ke Google Sheets";
+            btnHantar.style.backgroundColor = "#28a745";
+            btnBatal.style.display = "none";
+        }
+
         function padamRekod(id, jawatan) {
             if (confirm("Adakah anda pasti mahu memadam rekod ini secara kekal?")) {
                 fetch(API_URL, {
@@ -308,8 +353,12 @@
             e.preventDefault();
             btnHantar.disabled = true;
 
+            const editId = document.getElementById('editId').value;
+            const isUpdate = editId !== "";
+
             const payload = {
-                action: "CREATE",
+                action: isUpdate ? "UPDATE" : "CREATE",
+                id: editId,
                 nama: document.getElementById('nama').value,
                 ic: document.getElementById('ic').value,
                 jawatan: selectJawatan.value,
@@ -329,9 +378,8 @@
                 body: JSON.stringify(payload)
             })
             .then(() => {
-                alert("✅ Data Berjaya Dihantar!");
-                borang.reset();
-                tukarMedanSpesifik();
+                alert(isUpdate ? "✅ Data Dikemas Kini!" : "✅ Data Dihantar!");
+                batalEdit();
                 btnHantar.disabled = false;
                 setTimeout(muatDataPenuh, 1000);
             });
