@@ -6,235 +6,133 @@
     <title>Sistem Data Anggota - Hospital Kemaman</title>
     
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 15px;
-            color: #333;
-        }
-
-        header {
-            background-color: #005b96;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        header h1 {
-            font-size: 1.4rem;
-            margin: 0;
-        }
-
-        header h3 {
-            font-size: 1rem;
-            margin: 5px 0 0 0;
-            font-weight: normal;
-            opacity: 0.9;
-        }
-
-        section {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            font-size: 1.1rem;
-            color: #005b96;
-            margin-top: 0;
-            border-bottom: 2px solid #eef2f5;
-            padding-bottom: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        input[type="tel"],
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
-            background-color: #fafafa;
-        }
-
-        button {
-            width: 100%;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        button:disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
-        }
-
-        .btn-edit {
-            background-color: #ffc107;
-            color: #212529;
-            border: none;
-            padding: 6px 10px;
-            font-size: 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-
-        .btn-padam {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            font-size: 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-logout {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            font-size: 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-            float: right;
-            margin-top: -35px;
-        }
-
-        .user-bar {
-            background-color: #e3f2fd;
-            padding: 10px 15px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-        }
-
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-            font-size: 0.9rem;
-        }
-
-        th {
-            background-color: #005b96;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .status-loading {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-        }
-
-        /* TERSEMBUNYI SECARA DEFAULT */
-        #mainAppScreen {
-            display: none;
-        }
+        * { box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background-color: #f4f7f6; margin: 0; padding: 15px; color: #333; }
+        header { background-color: #005b96; color: white; text-align: center; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        header h1 { font-size: 1.4rem; margin: 0; }
+        header h3 { font-size: 1rem; margin: 5px 0 0 0; font-weight: normal; opacity: 0.9; }
+        section { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { font-size: 1.1rem; color: #005b96; margin-top: 0; border-bottom: 2px solid #eef2f5; padding-bottom: 8px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
+        input[type="text"], input[type="password"], input[type="date"], input[type="tel"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; background-color: #fafafa; }
+        button { width: 100%; background-color: #28a745; color: white; border: none; padding: 12px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; }
+        button:disabled { background-color: #6c757d; cursor: not-allowed; }
+        .btn-edit { background-color: #ffc107; color: #212529; border: none; padding: 6px 10px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; margin-right: 5px; }
+        .btn-padam { background-color: #dc3545; color: white; border: none; padding: 6px 10px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; }
+        .btn-logout { background-color: #6c757d; color: white; border: none; padding: 8px 15px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; float: right; margin-top: -35px; }
+        .user-bar { background-color: #e3f2fd; padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9rem; }
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 0.85rem; }
+        th { background-color: #005b96; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .status-loading { text-align: center; color: #666; font-style: italic; }
+        .spesifik-box { background-color: #f0f8ff; padding: 12px; border-radius: 6px; border-left: 4px solid #005b96; margin-bottom: 15px; display: none; }
+        #mainAppScreen { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- TAJUK UTAMA -->
     <header>
-        <h1>SISTEM DATA ANGGOTA</h1>
+        <h1>SISTEM DATA ANGGOTA (KKM)</h1>
         <h3>Hospital Kemaman</h3>
     </header>
 
-    <!-- 1. SKRIN LOGIN -->
+    <!-- SKRIN LOGIN -->
     <main id="loginScreen">
         <section>
             <h2>Log Masuk Sistem</h2>
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username">ID Pengguna:</label>
-                    <input type="text" id="username" placeholder="Contoh: ADM01 / USR01" required>
+                    <input type="text" id="username" placeholder="ADM01 / USR01" required>
                 </div>
-
                 <div class="form-group">
                     <label for="password">Kata Laluan:</label>
                     <input type="password" id="password" placeholder="Masukkan kata laluan" required>
                 </div>
-
                 <button type="submit" id="btnLogin">Log Masuk</button>
             </form>
         </section>
     </main>
 
-    <!-- 2. SKRIN UTAMA (UTAMA SISTEM) -->
+    <!-- SKRIN UTAMA -->
     <main id="mainAppScreen">
-        
-        <!-- BAR STATUS PENGGUNA -->
         <div class="user-bar">
-            <span>Log masuk sebagai: <strong id="lblNamaUser">-</strong> (<span id="lblRoleUser">-</span>)</span>
+            <span>Log masuk: <strong id="lblNamaUser">-</strong> (<span id="lblRoleUser">-</span>)</span>
             <button class="btn-logout" onclick="logOut()">Log Keluar</button>
         </div>
 
-        <!-- BORANG INPUT DATA -->
         <section>
-            <h2 id="tajukBorang">Borang Pendaftaran Tugas / Data</h2>
+            <h2 id="tajukBorang">Borang Maklumat Anggota KKM</h2>
             <form id="dataForm">
                 <input type="hidden" id="editId" value="">
 
+                <!-- MEDAN UMUM -->
                 <div class="form-group">
-                    <label for="nama">Nama Anggota:</label>
-                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama penuh" required>
+                    <label for="nama">Nama Penuh (Mengikut MyKad):</label>
+                    <input type="text" id="nama" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="jawatan">Kategori Anggota:</label>
-                    <select id="jawatan" name="jawatan" required>
+                    <label for="ic">No. Kad Pengenalan:</label>
+                    <input type="text" id="ic" placeholder="Contoh: 880101115544" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="jawatan">Kategori Jawatan:</label>
+                    <select id="jawatan" onchange="tukarMedanSpesifik()" required>
                         <option value="">-- Pilih Jawatan --</option>
-                        <option value="PEMANDU">Pemandu</option>
+                        <option value="PEMANDU">Pemandu Kenderaan</option>
                         <option value="PPP">Penolong Pegawai Perubatan (PPP)</option>
                         <option value="PPK">Pembantu Perawatan Kesihatan (PPK)</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="notel">No. Telefon:</label>
-                    <input type="tel" id="notel" name="notel" placeholder="Contoh: 0123456789" required>
+                    <label for="gred">Gred Jawatan:</label>
+                    <input type="text" id="gred" placeholder="Contoh: U29 / H11" required>
+                </div>
+
+                <!-- MEDAN SPESIFIK PEMANDU -->
+                <div id="boxPemandu" class="spesifik-box">
+                    <div class="form-group">
+                        <label for="kelas_lesen">Kelas Lesen Memandu:</label>
+                        <input type="text" id="kelas_lesen" placeholder="Contoh: D, E, GDL">
+                    </div>
+                    <div class="form-group">
+                        <label for="tamat_lesen">Tarikh Tamat Lesen Memandu:</label>
+                        <input type="date" id="tamat_lesen">
+                    </div>
+                </div>
+
+                <!-- MEDAN SPESIFIK PPP -->
+                <div id="boxPPP" class="spesifik-box">
+                    <div class="form-group">
+                        <label for="pos_basik">Memiliki Pos Basik?</label>
+                        <select id="pos_basik">
+                            <option value="Tiada">Tiada</option>
+                            <option value="Ada">Ada</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nama_pos_basik">Nama Pos Basik (Jika Ada):</label>
+                        <input type="text" id="nama_pos_basik" placeholder="Contoh: Pos Basik Kecemasan / Perioperatif">
+                    </div>
+                </div>
+
+                <!-- MEDAN SPESIFIK PPK -->
+                <div id="boxPPK" class="spesifik-box">
+                    <div class="form-group">
+                        <label for="unit_penempatan">Unit / Lokasi Penempatan Tugas:</label>
+                        <input type="text" id="unit_penempatan" placeholder="Contoh: Wad 2B / Unit Sajian">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notel">No. Telefon Bimbit:</label>
+                    <input type="tel" id="notel" placeholder="Contoh: 0123456789" required>
                 </div>
 
                 <button type="submit" id="btnHantar">Hantar Data ke Google Sheets</button>
@@ -242,34 +140,30 @@
             </form>
         </section>
 
-        <!-- JADUAL REKOD -->
         <section>
-            <h2>Senarai Keseluruhan Rekod (Google Sheets)</h2>
+            <h2>Senarai Keseluruhan Rekod Anggota</h2>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Bil.</th>
-                            <th>Masa / Tarikh</th>
                             <th>Nama Anggota</th>
-                            <th>Kategori</th>
-                            <th>No. Telefon</th>
+                            <th>No. KP</th>
+                            <th>Jawatan & Gred</th>
+                            <th>Maklumat Spesifik</th>
+                            <th>No. Tel</th>
                             <th id="thTindakan">Tindakan</th>
                         </tr>
                     </thead>
-                    <tbody id="senaraiAnggota">
-                    </tbody>
+                    <tbody id="senaraiAnggota"></tbody>
                 </table>
             </div>
         </section>
     </main>
 
-    <!-- KOD JAVASCRIPT AUTH & ROLES -->
     <script>
-        // ⚠️ TETAPKAN WEB APP URL ANDA DI SINI
-        const API_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbwPsZ8tA20_1ABxY3k2qvTv7xGwF6RMOV40b78_EsLuHgyF-lFDRCAIAqTvYullnA0t/exec";
+        const API_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbwORdwMQaCeoN5hREga_fzbe---4SE2DESUy3GZ9hcOgvNEN29kUowAjXwcFuNAnISN/exec";
 
-        // ELEMEN DOM
         const loginScreen = document.getElementById('loginScreen');
         const mainAppScreen = document.getElementById('mainAppScreen');
         const loginForm = document.getElementById('loginForm');
@@ -283,7 +177,14 @@
 
         let currentSession = null;
 
-        // 1. SEMAK SESI LOG IN SEBAIK SAHAJA LAMAN DIBUKA
+        // FUNGSI TUKAR MEDAN SPESIFIK BORANG
+        function tukarMedanSpesifik() {
+            const j = selectJawatan.value;
+            document.getElementById('boxPemandu').style.display = (j === 'PEMANDU') ? 'block' : 'none';
+            document.getElementById('boxPPP').style.display = (j === 'PPP') ? 'block' : 'none';
+            document.getElementById('boxPPK').style.display = (j === 'PPK') ? 'block' : 'none';
+        }
+
         window.onload = function() {
             const savedUser = localStorage.getItem('userSession');
             if (savedUser) {
@@ -292,22 +193,18 @@
             }
         };
 
-        // 2. FUNGSI LOG IN
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             btnLogin.disabled = true;
-            btnLogin.innerText = "Mengesahkan...";
-
-            const payload = {
-                action: "LOGIN",
-                username: document.getElementById('username').value,
-                password: document.getElementById('password').value
-            };
 
             fetch(API_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'text/plain' }, // Elak isu preflight CORS
-                body: JSON.stringify(payload)
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({
+                    action: "LOGIN",
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value
+                })
             })
             .then(res => res.json())
             .then(res => {
@@ -320,35 +217,20 @@
                     alert("❌ " + res.message);
                 }
                 btnLogin.disabled = false;
-                btnLogin.innerText = "Log Masuk";
-            })
-            .catch(err => {
-                alert("❌ Ralat Sambungan API: " + err);
-                btnLogin.disabled = false;
-                btnLogin.innerText = "Log Masuk";
             });
         });
 
-        // 3. FUNGSI PAPAR SKRIN UTAMA BERDASARKAN ROLES
         function paparkanSkrinUtama() {
             loginScreen.style.display = "none";
             mainAppScreen.style.display = "block";
-
             document.getElementById('lblNamaUser').innerText = currentSession.nama;
             document.getElementById('lblRoleUser').innerText = currentSession.role;
 
-            // Sembunyikan kolum Tindakan jika USER biasa
             const thTindakan = document.getElementById('thTindakan');
-            if (currentSession.role !== "ADMIN") {
-                thTindakan.style.display = "none";
-            } else {
-                thTindakan.style.display = "";
-            }
-
+            thTindakan.style.display = (currentSession.role === "ADMIN") ? "" : "none";
             muatDataPenuh();
         }
 
-        // 4. FUNGSI LOG KELUAR
         function logOut() {
             localStorage.removeItem('userSession');
             currentSession = null;
@@ -356,18 +238,16 @@
             loginScreen.style.display = "block";
         }
 
-        // 5. FUNGSI READ DATA
         function muatDataPenuh() {
-            jadualBody.innerHTML = '<tr><td colspan="6" class="status-loading">Sedang memuatkan data...</td></tr>';
+            jadualBody.innerHTML = '<tr><td colspan="7" class="status-loading">Sedang memuatkan data...</td></tr>';
 
             fetch(API_URL)
             .then(response => response.json())
             .then(res => {
                 if (res.status === "success") {
                     jadualBody.innerHTML = "";
-
                     if (res.data.length === 0) {
-                        jadualBody.innerHTML = '<tr><td colspan="6" class="status-loading">Tiada rekod dijumpai.</td></tr>';
+                        jadualBody.innerHTML = '<tr><td colspan="7" class="status-loading">Tiada rekod dijumpai.</td></tr>';
                         return;
                     }
 
@@ -375,12 +255,19 @@
                         const baris = document.createElement('tr');
                         const namaClean = item.nama.replace(/'/g, "\\'");
 
-                        // Butang Tindakan (Hanya untuk ADMIN)
+                        let maklumatSpesifik = "";
+                        if (item.jawatan === "PEMANDU") {
+                            maklumatSpesifik = `Lesen: ${item.spesifik1} (Tamat: ${item.spesifik2})`;
+                        } else if (item.jawatan === "PPP") {
+                            maklumatSpesifik = `Pos Basik: ${item.spesifik1} ${item.spesifik2 !== '-' ? '('+item.spesifik2+')' : ''}`;
+                        } else if (item.jawatan === "PPK") {
+                            maklumatSpesifik = `Penempatan: ${item.spesifik1}`;
+                        }
+
                         let kolumTindakan = "";
                         if (currentSession.role === "ADMIN") {
                             kolumTindakan = `
                                 <td>
-                                    <button class="btn-edit" onclick="sediaEdit('${item.id}', '${namaClean}', '${item.jawatan}', '${item.notel}')">Edit</button>
                                     <button class="btn-padam" onclick="padamRekod('${item.id}', '${item.jawatan}')">Padam</button>
                                 </td>
                             `;
@@ -390,9 +277,10 @@
 
                         baris.innerHTML = `
                             <td>${index + 1}</td>
-                            <td>${item.timestamp}</td>
                             <td>${item.nama}</td>
-                            <td>${item.jawatan}</td>
+                            <td>${item.ic}</td>
+                            <td>${item.jawatan} (${item.gred})</td>
+                            <td>${maklumatSpesifik}</td>
                             <td>${item.notel}</td>
                             ${kolumTindakan}
                         `;
@@ -402,43 +290,12 @@
             });
         }
 
-        // 6. FUNGSI EDIT / BATAL
-        function sediaEdit(id, nama, jawatan, notel) {
-            document.getElementById('editId').value = id;
-            document.getElementById('nama').value = nama;
-            document.getElementById('jawatan').value = jawatan;
-            document.getElementById('notel').value = notel;
-            selectJawatan.disabled = true;
-
-            document.getElementById('tajukBorang').innerText = "Kemas Kini Maklumat Anggota";
-            btnHantar.innerText = "Kemas Kini Data";
-            btnHantar.style.backgroundColor = "#005b96";
-            btnBatal.style.display = "block";
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function batalEdit() {
-            document.getElementById('editId').value = "";
-            borang.reset();
-            selectJawatan.disabled = false;
-            document.getElementById('tajukBorang').innerText = "Borang Pendaftaran Tugas / Data";
-            btnHantar.innerText = "Hantar Data ke Google Sheets";
-            btnHantar.style.backgroundColor = "#28a745";
-            btnBatal.style.display = "none";
-        }
-
-        // 7. FUNGSI PADAM (DELETE)
         function padamRekod(id, jawatan) {
             if (confirm("Adakah anda pasti mahu memadam rekod ini secara kekal?")) {
                 fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({
-                        action: "DELETE",
-                        id: id,
-                        jawatan: jawatan,
-                        role: currentSession.role
-                    })
+                    body: JSON.stringify({ action: "DELETE", id: id, jawatan: jawatan, role: currentSession.role })
                 })
                 .then(() => {
                     alert("✅ Rekod Dipadam!");
@@ -447,20 +304,21 @@
             }
         }
 
-        // 8. FUNGSI SUBMIT BORANG (CREATE / UPDATE)
         borang.addEventListener('submit', function(e) {
             e.preventDefault();
             btnHantar.disabled = true;
-            btnHantar.innerText = "Sedang Memproses...";
-
-            const editId = document.getElementById('editId').value;
-            const isUpdate = editId !== "";
 
             const payload = {
-                action: isUpdate ? "UPDATE" : "CREATE",
-                id: editId,
+                action: "CREATE",
                 nama: document.getElementById('nama').value,
-                jawatan: document.getElementById('jawatan').value,
+                ic: document.getElementById('ic').value,
+                jawatan: selectJawatan.value,
+                gred: document.getElementById('gred').value,
+                kelas_lesen: document.getElementById('kelas_lesen').value || "-",
+                tamat_lesen: document.getElementById('tamat_lesen').value || "-",
+                pos_basik: document.getElementById('pos_basik').value || "-",
+                nama_pos_basik: document.getElementById('nama_pos_basik').value || "-",
+                unit_penempatan: document.getElementById('unit_penempatan').value || "-",
                 notel: document.getElementById('notel').value,
                 role: currentSession.role
             };
@@ -471,17 +329,13 @@
                 body: JSON.stringify(payload)
             })
             .then(() => {
-                alert(isUpdate ? "✅ Data Dikemas Kini!" : "✅ Data Dihantar!");
-                batalEdit();
+                alert("✅ Data Berjaya Dihantar!");
+                borang.reset();
+                tukarMedanSpesifik();
                 btnHantar.disabled = false;
                 setTimeout(muatDataPenuh, 1000);
-            })
-            .catch(error => {
-                alert("❌ Ralat: " + error);
-                btnHantar.disabled = false;
             });
         });
     </script>
-
 </body>
 </html>
