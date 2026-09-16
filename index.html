@@ -3,183 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Data Anggota - Hospital Kemaman</title>
+    <title>Portal Anggota - Hospital Kemaman</title>
     
     <style>
         * { box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background-color: #f4f7f6; margin: 0; padding: 15px; color: #333; }
-        header { background-color: #005b96; color: white; text-align: center; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-        header h1 { font-size: 1.4rem; margin: 0; }
-        header h3 { font-size: 1rem; margin: 5px 0 0 0; font-weight: normal; opacity: 0.9; }
-        section { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h2 { font-size: 1.1rem; color: #005b96; margin-top: 0; border-bottom: 2px solid #eef2f5; padding-bottom: 8px; }
+        body { margin: 0; background-color: #f4f7f6; color: #333; }
+        
+        /* SIDEBAR DASHBOARD LAYOUT */
+        .wrapper { display: flex; min-height: 100vh; flex-direction: column; }
+        
+        @media (min-width: 768px) {
+            .wrapper { flex-direction: row; }
+            .sidebar { width: 250px; min-height: 100vh; }
+            .content { flex: 1; padding: 20px; }
+        }
+
+        .sidebar { background-color: #003366; color: white; padding: 20px 15px; }
+        .sidebar h2 { font-size: 1.1rem; color: #fff; border-bottom: 1px solid #004990; padding-bottom: 10px; margin-top: 0; }
+        .menu-list { list-style: none; padding: 0; margin: 20px 0; }
+        .menu-list li { margin-bottom: 10px; }
+        .menu-list a { color: #cfd8dc; text-decoration: none; display: block; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .menu-list a.active, .menu-list a:hover { background-color: #005b96; color: white; }
+
+        .content { padding: 15px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        
+        /* BORANG & JADUAL */
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
-        input[type="text"], input[type="password"], input[type="date"], input[type="tel"], select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; background-color: #fafafa; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
         button { width: 100%; background-color: #28a745; color: white; border: none; padding: 12px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; }
-        button:disabled { background-color: #6c757d; cursor: not-allowed; }
-        .btn-edit { background-color: #ffc107; color: #212529; border: none; padding: 6px 10px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; margin-right: 5px; }
-        .btn-padam { background-color: #dc3545; color: white; border: none; padding: 6px 10px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; }
-        .btn-logout { background-color: #6c757d; color: white; border: none; padding: 8px 15px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; float: right; margin-top: -35px; }
-        .user-bar { background-color: #e3f2fd; padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9rem; }
+        .btn-edit { background-color: #ffc107; color: #212529; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+        .btn-padam { background-color: #dc3545; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+        .btn-logout { background-color: #d9534f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; margin-top: 20px; width: 100%; }
+
         .table-container { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 0.85rem; }
         th { background-color: #005b96; color: white; }
         tr:nth-child(even) { background-color: #f9f9f9; }
-        .status-loading { text-align: center; color: #666; font-style: italic; }
-        .spesifik-box { background-color: #f0f8ff; padding: 12px; border-radius: 6px; border-left: 4px solid #005b96; margin-bottom: 15px; display: none; }
+
+        .spesifik-box { background-color: #eef7ff; padding: 12px; border-radius: 6px; border-left: 4px solid #005b96; margin-bottom: 15px; display: none; }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
         #mainAppScreen { display: none; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>SISTEM DATA ANGGOTA (KKM)</h1>
-        <h3>Hospital Kemaman</h3>
-    </header>
-
     <!-- SKRIN LOGIN -->
-    <main id="loginScreen">
-        <section>
-            <h2>Log Masuk Sistem</h2>
+    <main id="loginScreen" style="max-width:400px; margin: 50px auto; padding: 20px;">
+        <div class="card">
+            <h2 style="text-align:center; color:#005b96;">LOG MASUK PORTAL</h2>
             <form id="loginForm">
                 <div class="form-group">
-                    <label for="username">ID Pengguna:</label>
+                    <label>ID Pengguna:</label>
                     <input type="text" id="username" placeholder="ADM01 / USR01" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Kata Laluan:</label>
-                    <input type="password" id="password" placeholder="Masukkan kata laluan" required>
+                    <label>Kata Laluan:</label>
+                    <input type="password" id="password" required>
                 </div>
                 <button type="submit" id="btnLogin">Log Masuk</button>
             </form>
-        </section>
+        </div>
     </main>
 
-    <!-- SKRIN UTAMA -->
-    <main id="mainAppScreen">
-        <div class="user-bar">
-            <span>Log masuk: <strong id="lblNamaUser">-</strong> (<span id="lblRoleUser">-</span>)</span>
+    <!-- SKRIN UTAMA (SIDEBAR DASHBOARD) -->
+    <div id="mainAppScreen" class="wrapper">
+        
+        <!-- SIDEBAR KIRI -->
+        <div class="sidebar">
+            <h2>HOSPITAL KEMAMAN</h2>
+            <p style="font-size:0.85rem; margin-bottom:20px;">Selamat datang, <br><strong id="lblNamaUser">-</strong> (<span id="lblRoleUser">-</span>)</p>
+            
+            <ul class="menu-list">
+                <li><a id="navAnggota" class="active" onclick="tukarPage('secAnggota', 'navAnggota')">📝 Maklumat Anggota</a></li>
+                <li><a id="navKursus" onclick="tukarPage('secKursus', 'navKursus')">📚 Rekod Kursus</a></li>
+                <li><a id="navCuti" onclick="tukarPage('secCuti', 'navCuti')">🏖️ Rekod Cuti</a></li>
+            </ul>
+
             <button class="btn-logout" onclick="logOut()">Log Keluar</button>
         </div>
 
-        <section>
-            <h2 id="tajukBorang">Borang Maklumat Anggota KKM</h2>
-            <form id="dataForm">
-                <input type="hidden" id="editId" value="">
+        <!-- RUANG KANDUNGAN UTAMA (KANAN) -->
+        <div class="content">
 
-                <!-- MEDAN UMUM -->
-                <div class="form-group">
-                    <label for="nama">Nama Penuh (Mengikut MyKad):</label>
-                    <input type="text" id="nama" required>
+            <!-- PAGE 1: MAKLUMAT ANGGOTA -->
+            <div id="secAnggota" class="page-section active">
+                <div class="card">
+                    <h2 id="tajukBorang">Borang Maklumat Anggota KKM</h2>
+                    <form id="dataForm">
+                        <input type="hidden" id="editId" value="">
+                        <div class="form-group"><label>Nama Penuh:</label><input type="text" id="nama" required></div>
+                        <div class="form-group"><label>No. KP:</label><input type="text" id="ic" required></div>
+                        <div class="form-group">
+                            <label>Jawatan:</label>
+                            <select id="jawatan" onchange="tukarMedanSpesifik()" required>
+                                <option value="">-- Pilih Jawatan --</option>
+                                <option value="PEMANDU">Pemandu</option>
+                                <option value="PPP">PPP</option>
+                                <option value="PPK">PPK</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Gred:</label><input type="text" id="gred" required></div>
+
+                        <!-- SPESIFIK -->
+                        <div id="boxPemandu" class="spesifik-box">
+                            <div class="form-group"><label>Kelas Lesen:</label><input type="text" id="kelas_lesen"></div>
+                            <div class="form-group"><label>Tamat Lesen:</label><input type="date" id="tamat_lesen"></div>
+                        </div>
+                        <div id="boxPPP" class="spesifik-box">
+                            <div class="form-group"><label>Pos Basik?</label><select id="pos_basik"><option value="Tiada">Tiada</option><option value="Ada">Ada</option></select></div>
+                            <div class="form-group"><label>Nama Pos Basik:</label><input type="text" id="nama_pos_basik"></div>
+                        </div>
+                        <div id="boxPPK" class="spesifik-box">
+                            <div class="form-group"><label>Unit Penempatan:</label><input type="text" id="unit_penempatan"></div>
+                        </div>
+
+                        <div class="form-group"><label>No. Tel:</label><input type="tel" id="notel" required></div>
+                        <button type="submit" id="btnHantar">Hantar Data</button>
+                        <button type="button" id="btnBatal" style="display:none; margin-top:10px; background:#6c757d;" onclick="batalEdit()">Batal Edit</button>
+                    </form>
                 </div>
 
-                <div class="form-group">
-                    <label for="ic">No. Kad Pengenalan:</label>
-                    <input type="text" id="ic" placeholder="Contoh: 880101115544" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="jawatan">Kategori Jawatan:</label>
-                    <select id="jawatan" onchange="tukarMedanSpesifik()" required>
-                        <option value="">-- Pilih Jawatan --</option>
-                        <option value="PEMANDU">Pemandu Kenderaan</option>
-                        <option value="PPP">Penolong Pegawai Perubatan (PPP)</option>
-                        <option value="PPK">Pembantu Perawatan Kesihatan (PPK)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="gred">Gred Jawatan:</label>
-                    <input type="text" id="gred" placeholder="Contoh: U29 / H11" required>
-                </div>
-
-                <!-- MEDAN SPESIFIK PEMANDU -->
-                <div id="boxPemandu" class="spesifik-box">
-                    <div class="form-group">
-                        <label for="kelas_lesen">Kelas Lesen Memandu:</label>
-                        <input type="text" id="kelas_lesen" placeholder="Contoh: D, E, GDL">
-                    </div>
-                    <div class="form-group">
-                        <label for="tamat_lesen">Tarikh Tamat Lesen Memandu:</label>
-                        <input type="date" id="tamat_lesen">
-                    </div>
-                </div>
-
-                <!-- MEDAN SPESIFIK PPP -->
-                <div id="boxPPP" class="spesifik-box">
-                    <div class="form-group">
-                        <label for="pos_basik">Memiliki Pos Basik?</label>
-                        <select id="pos_basik">
-                            <option value="Tiada">Tiada</option>
-                            <option value="Ada">Ada</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="nama_pos_basik">Nama Pos Basik (Jika Ada):</label>
-                        <input type="text" id="nama_pos_basik" placeholder="Contoh: Pos Basik Kecemasan / Perioperatif">
+                <div class="card">
+                    <h2>Senarai Anggota</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Bil.</th><th>Nama</th><th>No. KP</th><th>Jawatan</th><th>Spesifik</th><th>No. Tel</th><th id="thTindakan">Tindakan</th></tr></thead>
+                            <tbody id="senaraiAnggota"></tbody>
+                        </table>
                     </div>
                 </div>
-
-                <!-- MEDAN SPESIFIK PPK -->
-                <div id="boxPPK" class="spesifik-box">
-                    <div class="form-group">
-                        <label for="unit_penempatan">Unit / Lokasi Penempatan Tugas:</label>
-                        <input type="text" id="unit_penempatan" placeholder="Contoh: Wad 2B / Unit Sajian">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="notel">No. Telefon Bimbit:</label>
-                    <input type="tel" id="notel" placeholder="Contoh: 0123456789" required>
-                </div>
-
-                <button type="submit" id="btnHantar">Hantar Data ke Google Sheets</button>
-                <button type="button" id="btnBatal" style="display:none; margin-top:10px; background:#6c757d;" onclick="batalEdit()">Batal Kemas Kini</button>
-            </form>
-        </section>
-
-        <section>
-            <h2>Senarai Keseluruhan Rekod Anggota</h2>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Bil.</th>
-                            <th>Nama Anggota</th>
-                            <th>No. KP</th>
-                            <th>Jawatan & Gred</th>
-                            <th>Maklumat Spesifik</th>
-                            <th>No. Tel</th>
-                            <th id="thTindakan">Tindakan</th>
-                        </tr>
-                    </thead>
-                    <tbody id="senaraiAnggota"></tbody>
-                </table>
             </div>
-        </section>
-    </main>
+
+            <!-- PAGE 2: REKOD KURSUS -->
+            <div id="secKursus" class="page-section">
+                <div class="card">
+                    <h2>Tambah Rekod Kursus Anggota</h2>
+                    <form id="formKursus">
+                        <div class="form-group"><label>No. KP Anggota:</label><input type="text" id="k_ic" required></div>
+                        <div class="form-group"><label>Nama Kursus:</label><input type="text" id="k_nama" required></div>
+                        <div class="form-group"><label>Anjuran:</label><input type="text" id="k_anjuran" required></div>
+                        <div class="form-group"><label>Tarikh Mula:</label><input type="date" id="k_mula" required></div>
+                        <div class="form-group"><label>Tarikh Tamat:</label><input type="date" id="k_tamat" required></div>
+                        <div class="form-group"><label>Bilangan Hari:</label><input type="number" id="k_hari" required></div>
+                        <button type="submit">Simpan Rekod Kursus</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- PAGE 3: REKOD CUTI -->
+            <div id="secCuti" class="page-section">
+                <div class="card">
+                    <h2>Tambah Rekod Cuti Anggota</h2>
+                    <form id="formCuti">
+                        <div class="form-group"><label>No. KP Anggota:</label><input type="text" id="c_ic" required></div>
+                        <div class="form-group">
+                            <label>Jenis Cuti:</label>
+                            <select id="c_jenis">
+                                <option value="Cuti Rehat">Cuti Rehat</option>
+                                <option value="Cuti Sakit">Cuti Sakit</option>
+                                <option value="Cuti Tanpa Rekod">Cuti Tanpa Rekod</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Tarikh Mula:</label><input type="date" id="c_mula" required></div>
+                        <div class="form-group"><label>Tarikh Tamat:</label><input type="date" id="c_tamat" required></div>
+                        <div class="form-group"><label>Bilangan Hari:</label><input type="number" id="c_hari" required></div>
+                        <div class="form-group"><label>Sebab / Catatan:</label><input type="text" id="c_sebab" required></div>
+                        <button type="submit">Simpan Rekod Cuti</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <script>
-        const API_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbwORdwMQaCeoN5hREga_fzbe---4SE2DESUy3GZ9hcOgvNEN29kUowAjXwcFuNAnISN/exec";
-
-        const loginScreen = document.getElementById('loginScreen');
-        const mainAppScreen = document.getElementById('mainAppScreen');
-        const loginForm = document.getElementById('loginForm');
-        const btnLogin = document.getElementById('btnLogin');
-        
-        const borang = document.getElementById('dataForm');
-        const jadualBody = document.getElementById('senaraiAnggota');
-        const btnHantar = document.getElementById('btnHantar');
-        const btnBatal = document.getElementById('btnBatal');
-        const selectJawatan = document.getElementById('jawatan');
+        const API_URL = "
+https://script.google.com/a/macros/moh.gov.my/s/AKfycbwaaZkqA7rk5o3adeyeE9ZGMqvGdM5KwIGPddGjQR_-L7YYNBQHkfmYGLzUwu43XFZc/exec";
 
         let currentSession = null;
         let dataGlobal = [];
 
+        // FUNGSI TUKAR PAGE (SPA)
+        function tukarPage(secId, navId) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.menu-list a').forEach(nav => nav.classList.remove('active'));
+            document.getElementById(secId).classList.add('active');
+            document.getElementById(navId).classList.add('active');
+        }
+
         function tukarMedanSpesifik() {
-            const j = selectJawatan.value;
+            const j = document.getElementById('jawatan').value;
             document.getElementById('boxPemandu').style.display = (j === 'PEMANDU') ? 'block' : 'none';
             document.getElementById('boxPPP').style.display = (j === 'PPP') ? 'block' : 'none';
             document.getElementById('boxPPK').style.display = (j === 'PPK') ? 'block' : 'none';
@@ -193,10 +210,8 @@
             }
         };
 
-        loginForm.addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            btnLogin.disabled = true;
-
             fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain' },
@@ -211,179 +226,126 @@
                 if (res.status === "success") {
                     currentSession = res.user;
                     localStorage.setItem('userSession', JSON.stringify(res.user));
-                    loginForm.reset();
                     paparkanSkrinUtama();
-                } else {
-                    alert("❌ " + res.message);
-                }
-                btnLogin.disabled = false;
+                } else { alert("❌ " + res.message); }
             });
         });
 
         function paparkanSkrinUtama() {
-            loginScreen.style.display = "none";
-            mainAppScreen.style.display = "block";
+            document.getElementById('loginScreen').style.display = "none";
+            document.getElementById('mainAppScreen').style.display = "flex";
             document.getElementById('lblNamaUser').innerText = currentSession.nama;
             document.getElementById('lblRoleUser').innerText = currentSession.role;
-
-            const thTindakan = document.getElementById('thTindakan');
-            thTindakan.style.display = (currentSession.role === "ADMIN") ? "" : "none";
+            document.getElementById('thTindakan').style.display = (currentSession.role === "ADMIN") ? "" : "none";
             muatDataPenuh();
         }
 
         function logOut() {
             localStorage.removeItem('userSession');
-            currentSession = null;
-            mainAppScreen.style.display = "none";
-            loginScreen.style.display = "block";
+            location.reload();
         }
 
         function muatDataPenuh() {
-            jadualBody.innerHTML = '<tr><td colspan="7" class="status-loading">Sedang memuatkan data...</td></tr>';
-
             fetch(API_URL)
-            .then(response => response.json())
+            .then(res => res.json())
             .then(res => {
                 if (res.status === "success") {
+                    dataGlobal = res.data;
+                    const jadualBody = document.getElementById('senaraiAnggota');
                     jadualBody.innerHTML = "";
-                    dataGlobal = res.data; // Simpan data global untuk rujukan Edit
-
-                    if (res.data.length === 0) {
-                        jadualBody.innerHTML = '<tr><td colspan="7" class="status-loading">Tiada rekod dijumpai.</td></tr>';
-                        return;
-                    }
-
                     res.data.forEach((item, index) => {
-                        const baris = document.createElement('tr');
-
-                        let maklumatSpesifik = "";
-                        if (item.jawatan === "PEMANDU") {
-                            maklumatSpesifik = `Lesen: ${item.spesifik1} (Tamat: ${item.spesifik2})`;
-                        } else if (item.jawatan === "PPP") {
-                            maklumatSpesifik = `Pos Basik: ${item.spesifik1} ${item.spesifik2 !== '-' ? '('+item.spesifik2+')' : ''}`;
-                        } else if (item.jawatan === "PPK") {
-                            maklumatSpesifik = `Penempatan: ${item.spesifik1}`;
-                        }
-
-                        let kolumTindakan = "";
-                        if (currentSession.role === "ADMIN") {
-                            kolumTindakan = `
-                                <td>
-                                    <button class="btn-edit" onclick="sediaEdit('${item.id}')">Edit</button>
-                                    <button class="btn-padam" onclick="padamRekod('${item.id}', '${item.jawatan}')">Padam</button>
-                                </td>
-                            `;
-                        } else {
-                            kolumTindakan = `<td style="display:none;"></td>`;
-                        }
-
-                        baris.innerHTML = `
-                            <td>${index + 1}</td>
-                            <td>${item.nama}</td>
-                            <td>${item.ic}</td>
-                            <td>${item.jawatan} (${item.gred})</td>
-                            <td>${maklumatSpesifik}</td>
-                            <td>${item.notel}</td>
-                            ${kolumTindakan}
-                        `;
-                        jadualBody.appendChild(baris);
+                        let spesifik = item.jawatan === "PEMANDU" ? `Lesen: ${item.spesifik1}` : item.jawatan === "PPP" ? `Pos Basik: ${item.spesifik1}` : `Unit: ${item.spesifik1}`;
+                        let btnAdmin = (currentSession.role === "ADMIN") ? `<td><button class="btn-edit" onclick="sediaEdit('${item.id}')">Edit</button> <button class="btn-padam" onclick="padamRekod('${item.id}','${item.jawatan}')">Padam</button></td>` : `<td style="display:none;"></td>`;
+                        jadualBody.innerHTML += `<tr><td>${index+1}</td><td>${item.nama}</td><td>${item.ic}</td><td>${item.jawatan} (${item.gred})</td><td>${spesifik}</td><td>${item.notel}</td>${btnAdmin}</tr>`;
                     });
                 }
             });
         }
 
-        // FUNGSI MEMANGGIL DATA KE BORANG APABILA BUTANG EDIT DITEKAN
+        // SIMPAN KURSUS
+        document.getElementById('formKursus').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch(API_URL, {
+                method: 'POST', headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({
+                    action: "ADD_KURSUS",
+                    ic: document.getElementById('k_ic').value,
+                    nama_kursus: document.getElementById('k_nama').value,
+                    anjuran: document.getElementById('k_anjuran').value,
+                    tarikh_mula: document.getElementById('k_mula').value,
+                    tarikh_tamat: document.getElementById('k_tamat').value,
+                    hari: document.getElementById('k_hari').value
+                })
+            }).then(() => { alert("✅ Rekod Kursus Disimpan!"); document.getElementById('formKursus').reset(); });
+        });
+
+        // SIMPAN CUTI
+        document.getElementById('formCuti').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch(API_URL, {
+                method: 'POST', headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({
+                    action: "ADD_CUTI",
+                    ic: document.getElementById('c_ic').value,
+                    jenis_cuti: document.getElementById('c_jenis').value,
+                    tarikh_mula: document.getElementById('c_mula').value,
+                    tarikh_tamat: document.getElementById('c_tamat').value,
+                    bil_hari: document.getElementById('c_hari').value,
+                    sebab: document.getElementById('c_sebab').value
+                })
+            }).then(() => { alert("✅ Rekod Cuti Disimpan!"); document.getElementById('formCuti').reset(); });
+        });
+
+        // SIMPAN / UPDATE ANGGOTA
+        document.getElementById('dataForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editId').value;
+            fetch(API_URL, {
+                method: 'POST', headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({
+                    action: editId ? "UPDATE" : "CREATE", id: editId,
+                    nama: document.getElementById('nama').value, ic: document.getElementById('ic').value,
+                    jawatan: document.getElementById('jawatan').value, gred: document.getElementById('gred').value,
+                    kelas_lesen: document.getElementById('kelas_lesen').value || "-", tamat_lesen: document.getElementById('tamat_lesen').value || "-",
+                    pos_basik: document.getElementById('pos_basik').value || "-", nama_pos_basik: document.getElementById('nama_pos_basik').value || "-",
+                    unit_penempatan: document.getElementById('unit_penempatan').value || "-", notel: document.getElementById('notel').value,
+                    role: currentSession.role
+                })
+            }).then(() => { alert("✅ Data Anggota Disimpan!"); batalEdit(); muatDataPenuh(); });
+        });
+
         function sediaEdit(id) {
             const item = dataGlobal.find(d => d.id === id);
             if (!item) return;
-
             document.getElementById('editId').value = item.id;
             document.getElementById('nama').value = item.nama;
             document.getElementById('ic').value = item.ic;
-            selectJawatan.value = item.jawatan;
-            selectJawatan.disabled = true; // Kategori tidak boleh ditukar semasa edit
+            document.getElementById('jawatan').value = item.jawatan;
+            document.getElementById('jawatan').disabled = true;
             tukarMedanSpesifik();
-
             document.getElementById('gred').value = item.gred;
             document.getElementById('notel').value = item.notel;
-
-            if (item.jawatan === "PEMANDU") {
-                document.getElementById('kelas_lesen').value = item.spesifik1;
-                document.getElementById('tamat_lesen').value = item.spesifik2;
-            } else if (item.jawatan === "PPP") {
-                document.getElementById('pos_basik').value = item.spesifik1;
-                document.getElementById('nama_pos_basik').value = item.spesifik2;
-            } else if (item.jawatan === "PPK") {
-                document.getElementById('unit_penempatan').value = item.spesifik1;
-            }
-
-            document.getElementById('tajukBorang').innerText = "Kemas Kini Maklumat Anggota";
-            btnHantar.innerText = "Kemas Kini Data";
-            btnHantar.style.backgroundColor = "#005b96";
-            btnBatal.style.display = "block";
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('btnHantar').innerText = "Kemas Kini Data";
+            document.getElementById('btnBatal').style.display = "block";
         }
 
         function batalEdit() {
             document.getElementById('editId').value = "";
-            borang.reset();
-            selectJawatan.disabled = false;
+            document.getElementById('dataForm').reset();
+            document.getElementById('jawatan').disabled = false;
             tukarMedanSpesifik();
-            document.getElementById('tajukBorang').innerText = "Borang Maklumat Anggota KKM";
-            btnHantar.innerText = "Hantar Data ke Google Sheets";
-            btnHantar.style.backgroundColor = "#28a745";
-            btnBatal.style.display = "none";
+            document.getElementById('btnHantar').innerText = "Hantar Data";
+            document.getElementById('btnBatal').style.display = "none";
         }
 
         function padamRekod(id, jawatan) {
-            if (confirm("Adakah anda pasti mahu memadam rekod ini secara kekal?")) {
+            if (confirm("Padam rekod ini?")) {
                 fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
+                    method: 'POST', headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify({ action: "DELETE", id: id, jawatan: jawatan, role: currentSession.role })
-                })
-                .then(() => {
-                    alert("✅ Rekod Dipadam!");
-                    setTimeout(muatDataPenuh, 1000);
-                });
+                }).then(() => { alert("✅ Rekod Dipadam!"); muatDataPenuh(); });
             }
         }
-
-        borang.addEventListener('submit', function(e) {
-            e.preventDefault();
-            btnHantar.disabled = true;
-
-            const editId = document.getElementById('editId').value;
-            const isUpdate = editId !== "";
-
-            const payload = {
-                action: isUpdate ? "UPDATE" : "CREATE",
-                id: editId,
-                nama: document.getElementById('nama').value,
-                ic: document.getElementById('ic').value,
-                jawatan: selectJawatan.value,
-                gred: document.getElementById('gred').value,
-                kelas_lesen: document.getElementById('kelas_lesen').value || "-",
-                tamat_lesen: document.getElementById('tamat_lesen').value || "-",
-                pos_basik: document.getElementById('pos_basik').value || "-",
-                nama_pos_basik: document.getElementById('nama_pos_basik').value || "-",
-                unit_penempatan: document.getElementById('unit_penempatan').value || "-",
-                notel: document.getElementById('notel').value,
-                role: currentSession.role
-            };
-
-            fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload)
-            })
-            .then(() => {
-                alert(isUpdate ? "✅ Data Dikemas Kini!" : "✅ Data Dihantar!");
-                batalEdit();
-                btnHantar.disabled = false;
-                setTimeout(muatDataPenuh, 1000);
-            });
-        });
     </script>
 </body>
 </html>
