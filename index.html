@@ -94,6 +94,21 @@
             cursor: not-allowed;
         }
 
+        .btn-padam {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+        }
+
+        .btn-padam:hover {
+            background-color: #c82333;
+        }
+
         .table-container {
             overflow-x: auto;
         }
@@ -176,11 +191,12 @@
                             <th>Nama Anggota</th>
                             <th>Kategori</th>
                             <th>No. Telefon</th>
+                            <th>Tindakan</th>
                         </tr>
                     </thead>
                     <tbody id="senaraiAnggota">
                         <tr>
-                            <td colspan="5" class="status-loading">Sedang memuatkan data dari Google Sheets...</td>
+                            <td colspan="6" class="status-loading">Sedang memuatkan data dari Google Sheets...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -188,10 +204,10 @@
         </section>
     </main>
 
-    <!-- KOD JAVASCRIPT API READ & WRITE -->
+    <!-- KOD JAVASCRIPT API READ, WRITE & DELETE -->
     <script>
         // ⚠️ TETAPKAN WEB APP URL ANDA DI SINI
-        const API_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbz8sLZtRYviqvu1g6moL90rywFbNWHDMDRZivAEoy8E0529bJqlMXjsAcVMbKl02vMb/exec";
+        const API_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbz9Nt8m0H77qZLwr98f5IKGDSDvVmmYGkL_EjbEF-L1Dqr8Ujnwrlv3z3YaBNIoiItH/exec";
 
         const borang = document.getElementById('dataForm');
         const jadualBody = document.getElementById('senaraiAnggota');
@@ -199,20 +215,19 @@
 
         // FUNGSI MEMBACA DATA DARI GOOGLE SHEETS (READ)
         function muatDataPenuh() {
-            jadualBody.innerHTML = '<tr><td colspan="5" class="status-loading">Sedang memuatkan data dari Google Sheets...</td></tr>';
+            jadualBody.innerHTML = '<tr><td colspan="6" class="status-loading">Sedang memuatkan data dari Google Sheets...</td></tr>';
 
             fetch(API_URL)
             .then(response => response.json())
             .then(res => {
                 if (res.status === "success") {
-                    jadualBody.innerHTML = ""; // Kosongkan jadual
+                    jadualBody.innerHTML = "";
 
                     if (res.data.length === 0) {
-                        jadualBody.innerHTML = '<tr><td colspan="5" class="status-loading">Tiada rekod dijumpai.</td></tr>';
+                        jadualBody.innerHTML = '<tr><td colspan="6" class="status-loading">Tiada rekod dijumpai.</td></tr>';
                         return;
                     }
 
-                    // Susun data ke dalam jadual
                     res.data.forEach((item, index) => {
                         const baris = document.createElement('tr');
                         baris.innerHTML = `
@@ -221,19 +236,44 @@
                             <td>${item.nama}</td>
                             <td>${item.jawatan}</td>
                             <td>${item.notel}</td>
+                            <td>
+                                <button class="btn-padam" onclick="padamRekod('${item.id}', '${item.jawatan}')">Padam</button>
+                            </td>
                         `;
                         jadualBody.appendChild(baris);
                     });
                 } else {
-                    jadualBody.innerHTML = '<tr><td colspan="5" class="status-loading">Gagal memuatkan data.</td></tr>';
+                    jadualBody.innerHTML = '<tr><td colspan="6" class="status-loading">Gagal memuatkan data.</td></tr>';
                 }
             })
             .catch(err => {
-                jadualBody.innerHTML = '<tr><td colspan="5" class="status-loading">Ralat Sambungan API.</td></tr>';
+                jadualBody.innerHTML = '<tr><td colspan="6" class="status-loading">Ralat Sambungan API.</td></tr>';
             });
         }
 
-        // MEMANGGIL FUNGSI READ SEBAIK SAHAJA LAMAN DIBUKA
+        // FUNGSI MEMADAM REKOD (DELETE)
+        function padamRekod(id, jawatan) {
+            if (confirm("Adakah anda pasti mahu memadam rekod ini secara kekal?")) {
+                fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: "DELETE",
+                        id: id,
+                        jawatan: jawatan
+                    })
+                })
+                .then(() => {
+                    alert("✅ Rekod Berjaya Dipadam!");
+                    setTimeout(muatDataPenuh, 1500);
+                })
+                .catch(error => {
+                    alert("❌ Ralat semasa memadam: " + error);
+                });
+            }
+        }
+
         window.onload = muatDataPenuh;
 
         // FUNGSI MENGHANTAR DATA (CREATE)
@@ -260,8 +300,6 @@
                 borang.reset();
                 btnHantar.disabled = false;
                 btnHantar.innerText = "Hantar Data ke Google Sheets";
-                
-                // Muat semula jadual secara automatik untuk dapatkan data terkini!
                 setTimeout(muatDataPenuh, 1500);
             })
             .catch(error => {
