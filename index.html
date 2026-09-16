@@ -9,7 +9,6 @@
         * { box-sizing: border-box; font-family: Arial, sans-serif; }
         body { margin: 0; background-color: #f4f7f6; color: #333; }
         
-        /* SIDEBAR DASHBOARD LAYOUT */
         .wrapper { display: flex; min-height: 100vh; flex-direction: column; }
         
         @media (min-width: 768px) {
@@ -28,7 +27,6 @@
         .content { padding: 15px; }
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
         
-        /* BORANG & JADUAL */
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
         input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
@@ -42,6 +40,10 @@
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 0.85rem; }
         th { background-color: #005b96; color: white; }
         tr:nth-child(even) { background-color: #f9f9f9; }
+
+        .badge-info { background-color: #17a2b8; color: white; padding: 3px 7px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        .badge-warning { background-color: #ffc107; color: #333; padding: 3px 7px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        .badge-success { background-color: #28a745; color: white; padding: 3px 7px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
 
         .spesifik-box { background-color: #eef7ff; padding: 12px; border-radius: 6px; border-left: 4px solid #005b96; margin-bottom: 15px; display: none; }
         .page-section { display: none; }
@@ -72,7 +74,6 @@
     <!-- SKRIN UTAMA (SIDEBAR DASHBOARD) -->
     <div id="mainAppScreen" class="wrapper">
         
-        <!-- SIDEBAR KIRI -->
         <div class="sidebar">
             <h2>HOSPITAL KEMAMAN</h2>
             <p style="font-size:0.85rem; margin-bottom:20px;">Selamat datang, <br><strong id="lblNamaUser">-</strong> (<span id="lblRoleUser">-</span>)</p>
@@ -86,7 +87,6 @@
             <button class="btn-logout" onclick="logOut()">Log Keluar</button>
         </div>
 
-        <!-- RUANG KANDUNGAN UTAMA (KANAN) -->
         <div class="content">
 
             <!-- PAGE 1: MAKLUMAT ANGGOTA -->
@@ -108,7 +108,12 @@
                         </div>
                         <div class="form-group"><label>Gred:</label><input type="text" id="gred" required></div>
 
-                        <!-- SPESIFIK -->
+                        <!-- KELAYAKAN CUTI KHAS INDIVIDU -->
+                        <div class="form-group">
+                            <label>Kelayakan Cuti Terkini (Hari Asal + Bawaan):</label>
+                            <input type="number" id="kelayakan_cuti" placeholder="Contoh: 30" required>
+                        </div>
+
                         <div id="boxPemandu" class="spesifik-box">
                             <div class="form-group"><label>Kelas Lesen:</label><input type="text" id="kelas_lesen"></div>
                             <div class="form-group"><label>Tamat Lesen:</label><input type="date" id="tamat_lesen"></div>
@@ -128,10 +133,22 @@
                 </div>
 
                 <div class="card">
-                    <h2>Senarai Anggota</h2>
+                    <h2>Senarai Keseluruhan Anggota & Ringkasan Rekod</h2>
                     <div class="table-container">
                         <table>
-                            <thead><tr><th>Bil.</th><th>Nama</th><th>No. KP</th><th>Jawatan</th><th>Spesifik</th><th>No. Tel</th><th id="thTindakan">Tindakan</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>Bil.</th>
+                                    <th>Nama Anggota</th>
+                                    <th>No. KP</th>
+                                    <th>Jawatan</th>
+                                    <th>Kelayakan Cuti</th>
+                                    <th>Bil. Kursus</th>
+                                    <th>Cuti Diambil</th>
+                                    <th>Baki Cuti</th>
+                                    <th id="thTindakan">Tindakan</th>
+                                </tr>
+                            </thead>
                             <tbody id="senaraiAnggota"></tbody>
                         </table>
                     </div>
@@ -143,7 +160,7 @@
                 <div class="card">
                     <h2>Tambah Rekod Kursus Anggota</h2>
                     <form id="formKursus">
-                        <div class="form-group"><label>No. KP Anggota:</label><input type="text" id="k_ic" required></div>
+                        <div class="form-group"><label>No. KP Anggota:</label><input type="text" id="k_ic" placeholder="Masukkan No. KP Anggota" required></div>
                         <div class="form-group"><label>Nama Kursus:</label><input type="text" id="k_nama" required></div>
                         <div class="form-group"><label>Anjuran:</label><input type="text" id="k_anjuran" required></div>
                         <div class="form-group"><label>Tarikh Mula:</label><input type="date" id="k_mula" required></div>
@@ -159,7 +176,7 @@
                 <div class="card">
                     <h2>Tambah Rekod Cuti Anggota</h2>
                     <form id="formCuti">
-                        <div class="form-group"><label>No. KP Anggota:</label><input type="text" id="c_ic" required></div>
+                        <div class="form-group"><label>No. KP Anggota:</label><input type="text" id="c_ic" placeholder="Masukkan No. KP Anggota" required></div>
                         <div class="form-group">
                             <label>Jenis Cuti:</label>
                             <select id="c_jenis">
@@ -181,12 +198,11 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbyWhhmacLHuHLk91jKJiV1_4HQ744jsASu_YJxobutayAEE_F7Afo5vMiTU7VK9BRR3/exec";
+        const API_URL = "https://script.google.com/a/macros/moh.gov.my/s/AKfycbyJ3ir5Unaw3RWGoSGjvRv-LCLNm29yfwraBE8MGvj832KRyQoTTHV74m4oWi_eI4wZ/exec";
 
         let currentSession = null;
         let dataGlobal = [];
 
-        // FUNGSI TUKAR PAGE (SPA)
         function tukarPage(secId, navId) {
             document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('.menu-list a').forEach(nav => nav.classList.remove('active'));
@@ -253,15 +269,25 @@
                     const jadualBody = document.getElementById('senaraiAnggota');
                     jadualBody.innerHTML = "";
                     res.data.forEach((item, index) => {
-                        let spesifik = item.jawatan === "PEMANDU" ? `Lesen: ${item.spesifik1}` : item.jawatan === "PPP" ? `Pos Basik: ${item.spesifik1}` : `Unit: ${item.spesifik1}`;
                         let btnAdmin = (currentSession.role === "ADMIN") ? `<td><button class="btn-edit" onclick="sediaEdit('${item.id}')">Edit</button> <button class="btn-padam" onclick="padamRekod('${item.id}','${item.jawatan}')">Padam</button></td>` : `<td style="display:none;"></td>`;
-                        jadualBody.innerHTML += `<tr><td>${index+1}</td><td>${item.nama}</td><td>${item.ic}</td><td>${item.jawatan} (${item.gred})</td><td>${spesifik}</td><td>${item.notel}</td>${btnAdmin}</tr>`;
+                        
+                        jadualBody.innerHTML += `
+                            <tr>
+                                <td>${index+1}</td>
+                                <td>${item.nama}</td>
+                                <td>${item.ic}</td>
+                                <td>${item.jawatan} (${item.gred})</td>
+                                <td><strong>${item.kelayakan_cuti} Hari</strong></td>
+                                <td><span class="badge-info">${item.bil_kursus} Kursus</span></td>
+                                <td><span class="badge-warning">${item.cuti_diambil} Hari</span></td>
+                                <td><span class="badge-success">${item.baki_cuti} Hari</span></td>
+                                ${btnAdmin}
+                            </tr>`;
                     });
                 }
             });
         }
 
-        // SIMPAN KURSUS
         document.getElementById('formKursus').addEventListener('submit', function(e) {
             e.preventDefault();
             fetch(API_URL, {
@@ -275,10 +301,9 @@
                     tarikh_tamat: document.getElementById('k_tamat').value,
                     hari: document.getElementById('k_hari').value
                 })
-            }).then(() => { alert("✅ Rekod Kursus Disimpan!"); document.getElementById('formKursus').reset(); });
+            }).then(() => { alert("✅ Rekod Kursus Disimpan!"); document.getElementById('formKursus').reset(); muatDataPenuh(); });
         });
 
-        // SIMPAN CUTI
         document.getElementById('formCuti').addEventListener('submit', function(e) {
             e.preventDefault();
             fetch(API_URL, {
@@ -292,10 +317,9 @@
                     bil_hari: document.getElementById('c_hari').value,
                     sebab: document.getElementById('c_sebab').value
                 })
-            }).then(() => { alert("✅ Rekod Cuti Disimpan!"); document.getElementById('formCuti').reset(); });
+            }).then(() => { alert("✅ Rekod Cuti Disimpan!"); document.getElementById('formCuti').reset(); muatDataPenuh(); });
         });
 
-        // SIMPAN / UPDATE ANGGOTA
         document.getElementById('dataForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const editId = document.getElementById('editId').value;
@@ -305,6 +329,7 @@
                     action: editId ? "UPDATE" : "CREATE", id: editId,
                     nama: document.getElementById('nama').value, ic: document.getElementById('ic').value,
                     jawatan: document.getElementById('jawatan').value, gred: document.getElementById('gred').value,
+                    kelayakan_cuti: document.getElementById('kelayakan_cuti').value,
                     kelas_lesen: document.getElementById('kelas_lesen').value || "-", tamat_lesen: document.getElementById('tamat_lesen').value || "-",
                     pos_basik: document.getElementById('pos_basik').value || "-", nama_pos_basik: document.getElementById('nama_pos_basik').value || "-",
                     unit_penempatan: document.getElementById('unit_penempatan').value || "-", notel: document.getElementById('notel').value,
@@ -323,6 +348,7 @@
             document.getElementById('jawatan').disabled = true;
             tukarMedanSpesifik();
             document.getElementById('gred').value = item.gred;
+            document.getElementById('kelayakan_cuti').value = item.kelayakan_cuti;
             document.getElementById('notel').value = item.notel;
             document.getElementById('btnHantar').innerText = "Kemas Kini Data";
             document.getElementById('btnBatal').style.display = "block";
